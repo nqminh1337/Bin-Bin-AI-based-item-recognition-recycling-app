@@ -1,0 +1,50 @@
+{
+  "name": "bin-bin",
+  "version": "1.0.0",
+  "main": "expo-router/entry",
+  "dependencies": {
+    "@expo/vector-icons": "^15.0.3",
+    "@google/genai": "^2.27.0",
+    "@react-native-async-storage/async-storage": "2.2.0",
+    "expo": "^58.0.0",
+    "expo-camera": "~58.0.12",
+    "expo-constants": "~58.0.13",
+    "expo-linking": "~58.0.14",
+    "expo-location": "~58.0.19",
+    "expo-notifications": "~58.0.11",
+    "expo-router": "~58.0.26",
+    "expo-status-bar": "~58.0.4",
+    "firebase": "^12.19.0",
+    "react": "19.3.0",
+    "react-dom": "19.3.0",
+    "react-native": "0.88.0",
+    "react-native-gesture-handler": "~3.3.0",
+    "react-native-maps": "1.29.11",
+    "react-native-reanimated": "4.7.1",
+    "react-native-safe-area-context": "~5.10.1",
+    "react-native-screens": "~4.30.0",
+    "react-native-svg": "15.16.0",
+    "react-native-webview": "14.0.1",
+    "react-native-worklets": "0.13.0"
+  },
+  "devDependencies": {
+    "@expo/ngrok": "^4.1.3",
+    "@types/node": "^26.6.2",
+    "@types/react": "~19.3.0",
+    "tsx": "^4.19.0",
+    "typescript": "~6.0.3",
+    "vitest": "^5.0.5"
+  },
+  "scripts": {
+    "start": "expo start",
+    "android": "expo start --android",
+    "ios": "expo start --ios",
+    "web": "expo start --web",
+    "seed:zones": "tsx scripts/seedZones.ts",
+    "seed:disposal": "tsx scripts/seedDisposal.ts",
+    "seed:superuser": "tsx scripts/seedSuperuser.ts",
+    "eval:mapping": "tsx scripts/evalItemMapping.ts",
+    "test": "vitest run"
+  },
+  "private": true
+}

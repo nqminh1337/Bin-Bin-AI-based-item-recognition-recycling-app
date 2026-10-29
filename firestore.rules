@@ -1,0 +1,73 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(uid) {
+      return signedIn() && request.auth.uid == uid;
+    }
+
+    // Reference data: readable by anyone, edited only via the console.
+    match /zones/{id} {
+      allow read: if true;
+      allow write: if false;
+    }
+    match /disposalRules/{id} {
+      allow read: if true;
+      allow write: if false;
+    }
+    match /dropOffLocations/{id} {
+      allow read: if true;
+      allow write: if false;
+    }
+    match /councilGuidelines/{id} {
+      allow read: if true;
+      allow write: if false;
+    }
+
+    // users/{uid} — written at sign-up by AuthService.
+    match /users/{uid} {
+      allow read, write: if isOwner(uid);
+    }
+
+    // PointsService queries where('userId', '==', uid), which these rules permit.
+    match /pointsLedger/{entryId} {
+      allow read: if signedIn() && resource.data.userId == request.auth.uid;
+      allow create: if signedIn() && request.resource.data.userId == request.auth.uid;
+      allow update, delete: if false;
+    }
+
+    // Local leaderboard is visible to every signed-in user; one doc per user (id == uid).
+    match /leaderboard/{uid} {
+      allow read: if signedIn();
+      allow write: if isOwner(uid);
+    }
+
+    match /petState/{uid} {
+      allow read, write: if isOwner(uid);
+    }
+
+    // One doc per fed item, written by PetService.feed(); the weekly recap reads them.
+    match /petFeedEvents/{eventId} {
+      allow read: if signedIn() && resource.data.userId == request.auth.uid;
+      allow create: if signedIn() && request.resource.data.userId == request.auth.uid;
+      allow update, delete: if false;
+    }
+
+    // Doc id is `${uid}_${weekStartDate}`, so ownership is checked on the id. That also
+    // covers reading last week's snapshot before it exists.
+    match /profileWeeklySnapshots/{snapshotId} {
+      allow read, write: if signedIn() && snapshotId.matches(request.auth.uid + '_.*');
+    }
+
+    // FR-31: reports may be anonymous (userId null) or tied to the caller.
+    match /guidanceReports/{reportId} {
+      allow create: if request.resource.data.userId == null
+        || (signedIn() && request.resource.data.userId == request.auth.uid);
+      allow read, update, delete: if false;
+    }
+  }
+}
